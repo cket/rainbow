@@ -6,10 +6,8 @@
 # latitude, longitude, time
 
 
-import datetime
-from math import *
-
-utc_datetime = datetime.datetime.utcnow()
+import datetime, time
+from math import sin, cos, tan, asin, acos, atan2, pi
 
 
 def get_hour_decimal(time):
@@ -31,10 +29,10 @@ def get_julian_day(utc_datetime):
     :param utc_datetime: a python datetime object corresponding to UTC
     :return: the Julian Day
     """
-    day = utc_datetime.date.day
-    month = utc_datetime.date.month
-    year = utc_datetime.date.year
-    hour = get_hour_decimal(utc_datetime.time)
+    day = utc_datetime.day
+    month = utc_datetime.month
+    year = utc_datetime.year
+    hour = get_hour_decimal(utc_datetime.time())
     return (1461 * (year + 4800 + (month - 14)/12))/4 \
             + (367 * (month - 2 - 12 * ((month - 14)/12)))/12 \
             - (3 * ((year + 4900 + (month - 14)/12)/100))/4 \
@@ -72,12 +70,13 @@ def ecliptic_to_celestial(ecliptic_coords):
     l, ep = ecliptic_coords
     right_ascension = atan2(cos(ep) * sin(l), cos(l))
     # ensure right_ascension is in range 0 to 2 * pi
-    if right_ascension < 0.0: right_ascension + 2 * pi
+    #if right_ascension < 0.0: right_ascension + 2 * pi
     declination = asin(sin(ep) * sin(l))
+    print('RIGHT ASC', right_ascension, 'DECLINATION', declination)
     return right_ascension, declination
 
 
-def get_horizontal(utc_datetime, latitude, longitude):
+def get_solar_vector(utc_datetime, latitude, longitude):
     """
     calculates the solar vector in terms of the zenith distance and the
     solar azimuth
@@ -89,18 +88,25 @@ def get_horizontal(utc_datetime, latitude, longitude):
     # some constants
     earth_mean_radius = 6371.01  # km
     astronomical_unit = 149597890  # km
+    radians = pi/180
 
     jd = get_julian_day(utc_datetime)
     ecliptic = jd_to_ecliptic(jd)
     right_ascension, declination = ecliptic_to_celestial(ecliptic)
 
     n = jd - 2451545.0
-    hour = get_hour_decimal(utc_datetime.time)
+    hour = get_hour_decimal(utc_datetime.time())
+    print('DECIMAL HOUR', hour)
     # greenwich mean sidereal time
     gmst = 6.6974243242 + 0.0657098283 * n + hour
+    print('GMST', gmst)
     # local mean sidereal time
-    lmst = (gmst * 15 + longitude) * (pi/180.0)
+    lmst = (gmst * 15 + longitude) * radians
+    print('LMST', lmst)
     hour_angle = lmst - right_ascension
+    print('HOUR ANGLE', hour_angle)
+    # convert latitude to radians
+    latitude *= radians
 
     zenith_distance = acos(cos(latitude) * cos(hour_angle) * cos(declination)
                            + sin(declination) * sin(latitude))
@@ -112,3 +118,10 @@ def get_horizontal(utc_datetime, latitude, longitude):
                     - sin(latitude) * cos(hour_angle))
 
     return zenith_distance, azimuth
+
+
+if __name__ == "__main__":
+    test_datetime = datetime.datetime(2016, 2, 18, 12)  #date and hour
+    test_lat = 36.9733
+    test_lng = -122.036
+    print(*get_solar_vector(test_datetime, test_lat, test_lng))
