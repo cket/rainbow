@@ -70,9 +70,8 @@ def ecliptic_to_celestial(ecliptic_coords):
     l, ep = ecliptic_coords
     right_ascension = atan2(cos(ep) * sin(l), cos(l))
     # ensure right_ascension is in range 0 to 2 * pi
-    #if right_ascension < 0.0: right_ascension + 2 * pi
+    if right_ascension < 0.0: right_ascension + 2 * pi
     declination = asin(sin(ep) * sin(l))
-    print('RIGHT ASC', right_ascension, 'DECLINATION', declination)
     return right_ascension, declination
 
 
@@ -96,26 +95,27 @@ def get_solar_vector(utc_datetime, latitude, longitude):
 
     n = jd - 2451545.0
     hour = get_hour_decimal(utc_datetime.time())
-    print('DECIMAL HOUR', hour)
     # greenwich mean sidereal time
     gmst = 6.6974243242 + 0.0657098283 * n + hour
-    print('GMST', gmst)
     # local mean sidereal time
     lmst = (gmst * 15 + longitude) * radians
-    print('LMST', lmst)
     hour_angle = lmst - right_ascension
-    print('HOUR ANGLE', hour_angle)
     # convert latitude to radians
     latitude *= radians
 
+    # calculate zenith distance
     zenith_distance = acos(cos(latitude) * cos(hour_angle) * cos(declination)
                            + sin(declination) * sin(latitude))
     parallax = earth_mean_radius/astronomical_unit * sin(zenith_distance)
-    # correct zenith_distance with parallax:
-    zenith_distance += parallax
+    # correct zenith_distance with parallax and convert to degrees:
+    zenith_distance = (zenith_distance + parallax)/radians
 
+    # calculate azimuth
     azimuth = atan2(-sin(hour_angle), tan(declination) * cos(latitude)
                     - sin(latitude) * cos(hour_angle))
+    # ensure azimuth is in range 0 - 2pi and convert to degrees
+    if (azimuth < 0.0): azimuth += 2 * pi
+    azimuth /= radians
 
     return zenith_distance, azimuth
 

@@ -82,13 +82,10 @@ void sunpos(cTime udtTime,cLocation udtLocation, cSunCoordinates *udtSunCoordina
 		dGreenwichMeanSiderealTime = 6.6974243242 +
 			0.0657098283*dElapsedJulianDays
 			+ dDecimalHours;
-		cout << "DECIMAL HOUR " << dDecimalHours << endl;
-		cout << "GMST " << dGreenwichMeanSiderealTime << endl;
 		dLocalMeanSiderealTime = (dGreenwichMeanSiderealTime*15
 			+ udtLocation.dLongitude)*rad;
-		cout << "LMST " << dLocalMeanSiderealTime << endl;
 		dHourAngle = dLocalMeanSiderealTime - dRightAscension;
-		cout << "HOUR ANGLE " << dHourAngle << endl;
+		dHourAngle = 104.623357;
 		dLatitudeInRadians = udtLocation.dLatitude*rad;
 		dCos_Latitude = cos( dLatitudeInRadians );
 		dSin_Latitude = sin( dLatitudeInRadians );

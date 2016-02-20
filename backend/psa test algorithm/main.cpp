@@ -20,8 +20,8 @@ int main() {
 
    //test location
    cLocation place = {
-      36.9733, //lat
-      -122.036 //long
+      -122.036, //long
+      36.9733 //lat
    };
 
    sunpos(time, place, &coords);
