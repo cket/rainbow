@@ -27,10 +27,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+GEOIP_PATH = os.path.join(BASE_DIR, "frontend/GeoLite2-City.mmdb")
 
 # Application definition
 
 INSTALLED_APPS = [
+    'frontend.apps.FrontendConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
