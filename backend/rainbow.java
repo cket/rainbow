@@ -1,27 +1,28 @@
 import java.util.*;
+import java.time.Instant;
 
-class ecliptic_coords {
+class Ecliptic_coords {
    double longitude;
    double obliquity;
-   ecliptic_coords(double longitude, double obliquity) {
+   public Ecliptic_coords(double longitude, double obliquity) {
       this.longitude = longitude;
       this.obliquity = obliquity;
    }
 }
 
-class celestial_coords {
+class Celestial_coords {
    double right_ascension;
    double declination;
-   ecliptic_coords(double right_ascension, double declination) {
+   public Celestial_coords(double right_ascension, double declination) {
       this.right_ascension = right_ascension;
       this.declination = declination;
    }
 }
 
-class solar_vec {
+class Solar_vec {
    double zenith_distance;
    double azimuth;
-   solar_vec(double zenith_distance, double azimuth) {
+   public Solar_vec(double zenith_distance, double azimuth) {
       this.zenith_distance = zenith_distance;
       this.azimuth = azimuth;
    }
@@ -53,7 +54,7 @@ class Rainbow {
    }
 
 
-   public eclpitic_coords jd_to_ecliptic(double jd){
+   public Ecliptic_coords jd_to_ecliptic(double jd){
       double n = jd - 2451545.0;
       double omega = 2.1429 - 0.0010394594 * n;
       double mean_longitude = 4.8950630 + 0.017202791698 * n;
@@ -62,32 +63,32 @@ class Rainbow {
          + 0.00034894 * Math.sin(2 * mean_anomaly) - 0.0001134 - 0.0000203 * Math.sin(omega);
       double obliquity_of_ecliptic = 0.4090928 - 6.2140e-9 * n
          + 0.0000396 * Math.cos(omega);
-      return new ecliptic_coords(ecliptic_longitude, obliquity_of_ecliptic);
+      return new Ecliptic_coords(ecliptic_longitude, obliquity_of_ecliptic);
    }
 
 
-   public celestial_coords ecliptic_to_celestial(double[] ecliptic){
-      double el = ecliptic[0];
-      double oe = ecliptic[1];
+   public Celestial_coords ecliptic_to_celestial(Ecliptic_coords ecliptic){
+      double el = ecliptic.longitude;
+      double oe = ecliptic.obliquity;
       double right_ascension = Math.atan2(Math.cos(oe) * Math.sin(el), Math.cos(el));
       // ensure right_ascension is in range 0 to 2 * pi
       if (right_ascension < 0.0) right_ascension += 2 * Math.PI;
       double declination = Math.asin(Math.sin(oe) * Math.sin(el));
-      return new celestial_coords(right_ascension, declination);
+      return new Celestial_coords(right_ascension, declination);
    }
 
 
-   public solar_vec get_solar_vector(Calendar calendar, double latitude, double longitude){
+   public Solar_vec get_solar_vector(Calendar calendar, double latitude, double longitude){
       // some constants
       double earth_mean_radius = 6371.01;  // km
       double astronomical_unit = 149597890; // km
       double radians = (Math.PI/180.0);
 
       double jd = get_julian_day(calendar);
-      double[] ecliptic = jd_to_ecliptic(jd);
-      double[] celestials= ecliptic_to_celestial(ecliptic);
-      double right_ascension = celestials[0];
-      double declination = celestials[1];
+      Ecliptic_coords ecliptic = jd_to_ecliptic(jd);
+      Celestial_coords celestials = ecliptic_to_celestial(ecliptic);
+      double right_ascension = celestials.right_ascension;
+      double declination = celestials.declination;
 
       double n = jd - 2451545.0;
       int hour = get_hour_decimal(calendar); //should be double
@@ -109,11 +110,15 @@ class Rainbow {
       double azimuth = Math.atan2(-Math.sin(hour_angle), Math.tan(declination)
             * Math.cos(latitude) - Math.sin(latitude) * Math.cos(hour_angle));
 
-      return new solar_vec(zenith_distance, azimuth);
+      return new Solar_vec(zenith_distance, azimuth);
    }
 
 
    public static void main(String[] args) {
+      // extract arguments
+      Instant time = Instant.ofEpochSecond(Long.parseLong(args[0]));
+      double latitude = Double.parseDouble(args[1]);
+      double longitude = Double.parseDouble(args[2]);
       System.out.println("Hello Rainblows!");
    }
 }
