@@ -6,7 +6,7 @@
 # latitude, longitude, time
 
 
-import datetime, time
+import datetime, argparse
 from math import sin, cos, tan, asin, acos, atan2, pi
 
 
@@ -121,7 +121,34 @@ def get_solar_vector(utc_datetime, latitude, longitude):
 
 
 if __name__ == "__main__":
+    """
+    takes in three commandline arguments:
+        unix timestamp      (int)
+        latitude            (float)
+        longitude           (float)
+    in that order. Assumes timestamp is valid.
+    Output is solar vector.
+
+    example usage:
+
+     $ python3 rainbow.py 1456605767 33.9733 -122.036
+     42.623741274448605 187.72391518184588
+
+    """
+    # extract command line arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument('unix_timestamp', type=int)
+    parser.add_argument('latitude', type=float)
+    parser.add_argument('longitude', type=float)
+    args = parser.parse_args()
+
+    in_datetime = datetime.datetime.utcfromtimestamp(args.unix_timestamp)
+    solar_vec = get_solar_vector(in_datetime, args.latitude, args.longitude)
+    print(*solar_vec)
+
+    """
     test_datetime = datetime.datetime(2016, 2, 18, 12)  #date and hour
     test_lat = 36.9733
     test_lng = -122.036
     print(*get_solar_vector(test_datetime, test_lat, test_lng))
+    """
