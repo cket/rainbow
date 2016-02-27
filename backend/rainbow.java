@@ -1,5 +1,5 @@
 import java.util.*;
-import java.time.Instant;
+import java.time.*;
 
 class Ecliptic_coords {
    double longitude;
@@ -26,27 +26,29 @@ class Solar_vec {
       this.zenith_distance = zenith_distance;
       this.azimuth = azimuth;
    }
+   public String toString() {
+      return zenith_distance + " " + azimuth;
+   }
 }
 
 
 class Rainbow {
 
    //maybe use java LocalTime
-   public int get_hour_decimal(Calendar calendar){ // should return double...
-      // Date date = new Date();   // given date
-      // Calendar calendar = GregorianCalendar.getInstance();
-      // creates a new calendar instance
-      // calendar.setTime(date);   // assigns calendar to given date
-      return calendar.get(Calendar.HOUR_OF_DAY);
+   public static double get_hour_decimal(LocalDateTime datetime) {
+      double second = datetime.getSecond() + datetime.getNano()/10e9;
+      double minute = datetime.getMinute() + second/60;
+      return datetime.getHour() + minute/60;
+
    }
 
 
-   public double get_julian_day(Calendar calendar){
+   public static double get_julian_day(LocalDateTime datetime) {
       //utc_datetime.date.day
-      int day = calendar.get(Calendar.DAY_OF_MONTH);
-      int month = calendar.get(Calendar.MONTH);
-      int year =  calendar.get(Calendar.YEAR);
-      int hour = get_hour_decimal(calendar);
+      int day = datetime.getDayOfMonth();
+      int month = datetime.getMonthValue();
+      int year = datetime.getYear();
+      double hour = get_hour_decimal(datetime);
       return (1461 * (year + 4800 + (month - 14)/12))/4 +
          (367 * (month - 2 - 12 * ((month - 14)/12)))/12 -
          (3 * ((year + 4900 + (month - 14)/12)/100))/4 +
@@ -54,7 +56,7 @@ class Rainbow {
    }
 
 
-   public Ecliptic_coords jd_to_ecliptic(double jd){
+   public static Ecliptic_coords jd_to_ecliptic(double jd) {
       double n = jd - 2451545.0;
       double omega = 2.1429 - 0.0010394594 * n;
       double mean_longitude = 4.8950630 + 0.017202791698 * n;
@@ -67,7 +69,7 @@ class Rainbow {
    }
 
 
-   public Celestial_coords ecliptic_to_celestial(Ecliptic_coords ecliptic){
+   public static Celestial_coords ecliptic_to_celestial(Ecliptic_coords ecliptic) {
       double el = ecliptic.longitude;
       double oe = ecliptic.obliquity;
       double right_ascension = Math.atan2(Math.cos(oe) * Math.sin(el), Math.cos(el));
@@ -78,20 +80,20 @@ class Rainbow {
    }
 
 
-   public Solar_vec get_solar_vector(Calendar calendar, double latitude, double longitude){
+   public static Solar_vec get_solar_vector(LocalDateTime datetime, double latitude, double longitude) {
       // some constants
       double earth_mean_radius = 6371.01;  // km
       double astronomical_unit = 149597890; // km
       double radians = (Math.PI/180.0);
 
-      double jd = get_julian_day(calendar);
+      double jd = get_julian_day(datetime);
       Ecliptic_coords ecliptic = jd_to_ecliptic(jd);
       Celestial_coords celestials = ecliptic_to_celestial(ecliptic);
       double right_ascension = celestials.right_ascension;
       double declination = celestials.declination;
 
       double n = jd - 2451545.0;
-      int hour = get_hour_decimal(calendar); //should be double
+      double hour = get_hour_decimal(datetime);
       // greenwich mean sidereal time
       double gmst = 6.6974243242 + 0.0657098283 * n + hour;
       // local mean sidereal time
@@ -116,9 +118,13 @@ class Rainbow {
 
    public static void main(String[] args) {
       // extract arguments
-      Instant time = Instant.ofEpochSecond(Long.parseLong(args[0]));
+      long unix_timestamp = Long.parseLong(args[0]);
+      LocalDateTime in_datetime = LocalDateTime.ofEpochSecond(unix_timestamp, 0, ZoneOffset.UTC);
       double latitude = Double.parseDouble(args[1]);
       double longitude = Double.parseDouble(args[2]);
-      System.out.println("Hello Rainblows!");
+
+      // calculate solar vector
+      Solar_vec sol = get_solar_vector(in_datetime, latitude, longitude);
+      System.out.println(sol);
    }
 }
