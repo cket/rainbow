@@ -70,7 +70,7 @@ def ecliptic_to_celestial(ecliptic_coords):
     l, ep = ecliptic_coords
     right_ascension = atan2(cos(ep) * sin(l), cos(l))
     # ensure right_ascension is in range 0 to 2 * pi
-    if right_ascension < 0.0: right_ascension + 2 * pi
+    if right_ascension < 0.0: right_ascension += 2 * pi
     declination = asin(sin(ep) * sin(l))
     return right_ascension, declination
 
