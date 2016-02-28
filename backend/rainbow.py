@@ -107,6 +107,7 @@ def get_solar_vector(utc_datetime, latitude, longitude):
     zenith_distance = acos(cos(latitude) * cos(hour_angle) * cos(declination)
                            + sin(declination) * sin(latitude))
     parallax = earth_mean_radius/astronomical_unit * sin(zenith_distance)
+
     # correct zenith_distance with parallax and convert to degrees:
     zenith_distance = (zenith_distance + parallax)/radians
 
@@ -114,7 +115,7 @@ def get_solar_vector(utc_datetime, latitude, longitude):
     azimuth = atan2(-sin(hour_angle), tan(declination) * cos(latitude)
                     - sin(latitude) * cos(hour_angle))
     # ensure azimuth is in range 0 - 2pi and convert to degrees
-    if (azimuth < 0.0): azimuth += 2 * pi
+    if azimuth < 0.0: azimuth += 2 * pi
     azimuth /= radians
 
     return zenith_distance, azimuth

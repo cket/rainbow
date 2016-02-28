@@ -1,6 +1,7 @@
 import java.util.*;
 import java.time.*;
 
+// storage classes for coordinate values
 class Ecliptic_coords {
    double longitude;
    double obliquity;
@@ -32,14 +33,13 @@ class Solar_vec {
 }
 
 
+// main, etc.
 class Rainbow {
 
-   //maybe use java LocalTime
    public static double get_hour_decimal(LocalDateTime datetime) {
       double second = datetime.getSecond() + datetime.getNano()/10e9;
       double minute = datetime.getMinute() + second/60;
       return datetime.getHour() + minute/60;
-
    }
 
 
@@ -107,16 +107,32 @@ class Rainbow {
             * Math.cos(declination) + Math.sin(declination) * Math.sin(latitude));
       double parallax = earth_mean_radius/astronomical_unit * Math.sin(zenith_distance);
       // correct zenith_distance with parallax and convert to degrees
-      zenith_distance = (zenith_distance * parallax)/radians;
+      zenith_distance = (zenith_distance + parallax)/radians;
 
+      // calculate azimuth
       double azimuth = Math.atan2(-Math.sin(hour_angle), Math.tan(declination)
             * Math.cos(latitude) - Math.sin(latitude) * Math.cos(hour_angle));
+      // ensure azimuth is in range 0 - 2pi and convert to degrees
+      if (azimuth < 0.0) azimuth += 2 * Math.PI;
+      azimuth /= radians;
 
       return new Solar_vec(zenith_distance, azimuth);
    }
 
 
    public static void main(String[] args) {
+      /**
+       * Calculates solar vector in degrees given the following args:
+       *    unix timestamp    (int)
+       *    latitude          (double)
+       *    longitude         (double)
+       * in that order. Assumes input is correct (does not check or
+       * give warnings. Output is zenith deistance followed by azimuth.
+       *
+       * Example usage:
+       *    $ java Rainbow 1456605767 33.9733 -122.036
+       *    42.623741274448605 187.72391518184588
+       */
       // extract arguments
       long unix_timestamp = Long.parseLong(args[0]);
       LocalDateTime in_datetime = LocalDateTime.ofEpochSecond(unix_timestamp, 0, ZoneOffset.UTC);
