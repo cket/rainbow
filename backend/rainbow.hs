@@ -86,11 +86,11 @@ main :: IO()
 main = do args <- getArgs
           let lat = read (args!!1)
           let long = read (args!!2)
-          let utc = posixSecondsToUTCTime (fromInteger (secondsToDiffTime (read (args!!0))))
+          let utc = posixSecondsToUTCTime (fromRational ( toRational (secondsToDiffTime (read (args!!0)))))
           let dateTime = utcToDateTime utc
           let tuple = splitDateTime dateTime
-          get_solar_vector (fst tuple) (snd tuple) lat long
-
+          let results = get_solar_vector (fst tuple) (snd tuple) lat long
+          putStrLn (show results)
 
 utcToDateTime :: UTCTime -> DateTime
 utcToDateTime (UTCTime day difftime) = dayToDateTime day
