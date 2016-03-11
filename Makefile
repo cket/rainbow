@@ -9,6 +9,7 @@ to run the project do
 	make install
 	make [language choice]
 	make run
+	then navigate to 127.0.0.1/frontend/ to see the output
 
 Requires: 
 	python 3.5.1

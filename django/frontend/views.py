@@ -45,25 +45,7 @@ def index(request):
         rainbow = "There could be a rainbow!"
     else:
         rainbow = "There is probably not a rainbow :("
-#     rainbow+="""
-#                       ___----~~~~~~----___\n
-#                  _-~~~____-----~~-----____~~~-_\n
-#               ..~.-~~--   ___------___   --~~-_~..\n
-#             .'_.~.~~---~~~  __----__  ~~~---~` ~`.`.\n
-#           .'.~ .'.~~__---~~~        ~~~---__~`.`. `_`.\n
-#          ' .'.' /'/~                        ~-.\.`. `.~.\n
-#        /'/'/'/'/'/                             `.`.`. ~.\\\n
-#      .~.~.~.~.~.~                                `..`. .`.\\\n
-#     .'.'.'.'.'.'                                   \`.`.`.``.\n
-#    | | | | | |                                      : .\ \ \ \\\n
-#  _|_|_|_|_|_|_                                       : \.`.`. .\n
-# |  G          |                                       : : : : :.\n
-#  |  O  L     |     H A P P Y   S T .                   :: : : :|.\n
-#  |   O  U    |                                         || | | | |.\n
-# /     D  C    \           P A T R I C K ' S   D A Y ! .| | | | | |.\n
-# |         K   |                                       ||| || | || |\n
-#  \___________/________________________________________________________\n
-#  """
-
-    return HttpResponse("You are in {} at coordinates ({}, {}) with ip {} and your weather is {}. The solar height is {}. \
-        {}".format(city, lat, lon, ip, weather_desc, solar_height, rainbow))
+    context = {'response':"You are in {} at coordinates ({}, {}) with ip {} and your weather is {}. The solar height is {}. \
+        {}".format(city, lat, lon, ip, weather_desc, solar_height, rainbow)}
+    
+    return render(request, 'rainbow.html', context)
