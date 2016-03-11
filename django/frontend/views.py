@@ -3,6 +3,7 @@ import socket
 import requests
 from subprocess import check_output
 import time
+import os
 from urllib.request import urlopen
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -21,7 +22,13 @@ def index(request):
     if 'rain' in current_weather.json():
         good_weather = True
 
-    solar_vector = check_output("python3 ../backend/rainbow.py {} {} {}".format(int(time.time()), lat, lon), shell=True)
+    def rainbowFile(string):
+        return os.path.isfile("../backend/"+string) and string.startswith('rainbow')
+
+    runnable= next(filter(rainbowFile, os.listdir('../backend')))  # should be only one rainbow file here
+    to_execute="python3" if runnable.endswith(".py") else ""
+
+    solar_vector = check_output("{} ../backend/{} {} {} {}".format(to_execute, runnable, int(time.time()), lat, lon), shell=True)
     solar_vector = solar_vector.decode('utf-8').split(" ", 1)
     zenith_distance = list(map(float, solar_vector))[0]
     solar_height = 90 - zenith_distance
