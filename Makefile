@@ -7,7 +7,7 @@ language target specify backend choices
 
 to run the project do 
 	make install
-	make [language choice]
+	make [language choice if you don't want python]
 	make run
 	then navigate to 127.0.0.1/frontend/ to see the output
 
@@ -27,10 +27,7 @@ help:
 clean:
 	-rm ./backend/rainbow*
 
-check: # make sure a language has been specified with the most beautiful one liner in the world \s
-	cd backend && python3 -c "import os; exit(0) if len(list(filter(os.path.isfile, os.listdir('.'))))==1 else exit(1)"
-
-install:
+install: python
 	pip install django
 	pip install geoip2
 	cabal install datetime
@@ -48,5 +45,5 @@ python: clean
 c: clean
 	cd backend/psa_test_algorithm && make && mv rainbow ../
 	
-run: check
+run:
 	cd django && python3 manage.py runserver
