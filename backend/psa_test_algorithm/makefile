@@ -11,4 +11,4 @@ sunpos.o: sunpos.cpp sunpos.h
 	g++ -c -Wall -g sunpos.cpp sunpos.h
 
 clean:
-	rm *.o *.gch main
+	rm *.o *.gch rainbow
