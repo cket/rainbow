@@ -5,7 +5,6 @@
 using namespace std;
 
 int main() {
-   cout << "hello world" << endl;
    cSunCoordinates coords = {0.0, 0.0};
 
    //test time

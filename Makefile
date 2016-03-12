@@ -24,11 +24,11 @@ export help
 help:
 	@echo "$$help"
 
-clean: 
+clean:
 	-rm ./backend/rainbow*
 
 check: # make sure a language has been specified with the most beautiful one liner in the world \s
-	cd backend && python -c "import os; exit(0) if len(list(filter(os.path.isfile, os.listdir('.'))))==1 else exit(1)"
+	cd backend && python3 -c "import os; exit(0) if len(list(filter(os.path.isfile, os.listdir('.'))))==1 else exit(1)"
 
 install:
 	pip install django
@@ -41,10 +41,12 @@ haskell: clean
 
 java: clean
 	cd backend && cp ./languages/rainbow.java ./ && javac rainbow.java
-	rm backend/rainbow.*
 	
 python: clean
 	cd backend && cp ./languages/rainbow.py ./
+
+c: clean
+	cd backend/psa_test_algorithm && make && mv rainbow ../
 	
 run: check
 	cd django && python3 manage.py runserver

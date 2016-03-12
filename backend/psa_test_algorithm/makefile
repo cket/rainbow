@@ -2,7 +2,7 @@
 all: main
 
 main: main.o sunpos.o
-	g++ -o main main.o sunpos.o
+	g++ -o rainbow main.o sunpos.o
 
 main.o: main.cpp sunpos.h
 	g++ -c -Wall -g main.cpp sunpos.h

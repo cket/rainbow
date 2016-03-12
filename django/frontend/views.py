@@ -30,10 +30,17 @@ def index(request):
         good_weather = False # API sometimes leaves out the rain field if it isn't raining. but not always. cool.
 
     def rainbowFile(string):
-        return os.path.isfile("../backend/"+string) and string.startswith('rainbow')
+        return os.path.isfile("../backend/"+string) and (string.startswith('rainbow') or string.startswith('Rainbow'))
 
     runnable= next(filter(rainbowFile, os.listdir('../backend')))  # should be only one rainbow file here
-    to_execute="python3" if runnable.endswith(".py") else ""
+
+    if runnable.endswith(".py"):
+        to_execute="python3"
+    elif runnable.endswith(".class"):
+        to_execute="java"
+        runnable="rainbow"
+    else:
+        to_execute=""
 
     solar_vector = check_output("{} ../backend/{} {} {} {}".format(to_execute, runnable, int(time.time()), lat, lon), shell=True)
     solar_vector = solar_vector.decode('utf-8').split(" ", 1)  # our vector is read in as a byte string
