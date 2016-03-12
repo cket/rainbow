@@ -1,6 +1,6 @@
 define help
 
-Supported targets: 'install', 'haskell', 'java', 'python', or 'run'
+Supported targets: 'install', 'haskell', 'java', 'python', 'c' or 'run'
 'install' will install django + geoip2 from pip and datetime from cabal.
 'run' will start the development server on your computer. Ctrl-C will stop it.
 language target specify backend choices
