@@ -26,6 +26,6 @@ int main() {
 
    sunpos(time, place, &coords);
 
-   cout << coords.dZenithAngle << "," << coords.dAzimuth << endl;
+   cout << coords.dZenithAngle << " " << coords.dAzimuth << endl;
    return 0;
 }
