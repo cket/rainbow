@@ -38,11 +38,15 @@ def index(request):
         to_execute="python3"
     elif runnable.endswith(".class"):
         to_execute="java"
-        runnable="rainbow"
     else:
         to_execute=""
+    
+    if to_execute=="java":
+        command = "cd ../backend && java Rainbow {} {} {}".format(int(time.time()), lat, lon)
+    else:
+        command = "{} ../backend/{} {} {} {}".format(to_execute, runnable, int(time.time()), lat, lon)
 
-    solar_vector = check_output("{} ../backend/{} {} {} {}".format(to_execute, runnable, int(time.time()), lat, lon), shell=True)
+    solar_vector = check_output(command, shell=True)
     solar_vector = solar_vector.decode('utf-8').split(" ", 1)  # our vector is read in as a byte string
     zenith_distance = list(map(float, solar_vector))[0]
     solar_height = 90 - zenith_distance
