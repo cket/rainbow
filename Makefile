@@ -5,13 +5,14 @@ Supported targets: 'install', 'haskell', 'java', 'python', 'c' or 'run'
 'run' will start the development server on your computer. Ctrl-C will stop it.
 language target specify backend choices
 
-to run the project do 
+to run the project do
 	make install
 	make [language choice if you don't want python]
+	     [java || python || c || haskell]
 	make run
 	then navigate to 127.0.0.1/frontend/ to see the output
 
-Requires: 
+Requires:
 	python 3.5.1
 	Java 8
 	Haskell
@@ -25,7 +26,7 @@ help:
 	@echo "$$help"
 
 clean:
-	-rm ./backend/rainbow*
+	-rm ./backend/rainbow* ./backend/*.class
 
 install: python
 	pip install django
@@ -38,12 +39,12 @@ haskell: clean
 
 java: clean
 	cd backend && cp ./languages/rainbow.java ./ && javac rainbow.java
-	
+
 python: clean
 	cd backend && cp ./languages/rainbow.py ./
 
 c: clean
 	cd backend/psa_test_algorithm && make && mv rainbow ../
-	
+
 run:
 	cd django && python3 manage.py runserver
